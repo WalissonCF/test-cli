@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    // File Layout - OBRIGATÓRIO descommentar
+    "rootDir": "./src",
+    "outDir": "./dist",
+    // Environment Settings
+    "module": "nodenext", // ← Pode manter
+    "target": "esnext", // ← Pode manter (por sua conta e risco)
+    "types": [
+      "node"
+    ], // ← OBRIGATÓRIO mudar de [] para ["node"]
+    "lib": [
+      "esnext"
+    ], // ← OBRIGATÓRIO descommentar
+    // Other Outputs
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    // Stricter Typechecking Options
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    // Recommended Options
+    "strict": true,
+    "verbatimModuleSyntax": false,
+    "isolatedModules": true,
+    "noUncheckedSideEffectImports": true,
+    "moduleDetection": "force",
+    "skipLibCheck": true,
+    // CLI necessários
+    "esModuleInterop": true, // ← ADICIONAR
+    "allowSyntheticDefaultImports": true, // ← ADICIONAR
+    "resolveJsonModule": true // ← ADICIONAR (para import package.json),
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "templates/**/*",
+    "node_modules/**/*",
+    "dist/**/*"
+  ]
+}
