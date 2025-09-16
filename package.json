@@ -6,6 +6,11 @@
   "bin": {
     "wally": "dist/cli.js"
   },
+  "files": [
+    "dist/**/*",
+    "templates/**/*",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
