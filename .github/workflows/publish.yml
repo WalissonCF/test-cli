@@ -62,14 +62,13 @@ jobs:
           test -d templates/        # Verifica se a pasta de templates existe
         # Esses checks garantem que todos os arquivos necessários foram gerados
       
-      # Passo 7: Publica o pacote no NPM usando OpenID Connect
+      # Passo 7: Publica o pacote no NPM usando OpenID Connect (OIDC)
       - name: Publish to NPM
         run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         # --provenance adiciona informações de origem para maior transparência
         # --access public garante que o pacote será público (importante para scoped packages)
-        # NODE_AUTH_TOKEN usa autenticação segura via OpenID Connect
+        # A autenticação acontece automaticamente via OpenID Connect
+        # Não é necessário NODE_AUTH_TOKEN quando usando Trusted Publisher
 
 # Comentários adicionais sobre funcionalidades avançadas:
 #
