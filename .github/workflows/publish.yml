@@ -1,92 +1,29 @@
-# .github/workflows/publish.yml
-# Workflow para publicação automatizada da @wally-ui/cli no NPM
-# Este arquivo define quando e como novas versões são publicadas automaticamente
+name: Publish Package
 
-name: Publish to NPM
-
-# Define os eventos que acionam este workflow
-# Neste caso, apenas quando uma nova tag de versão é criada
 on:
   push:
     tags:
-      - 'v*'  # Aciona quando tags começando com 'v' são criadas (ex: v1.0.1, v2.0.0)
+      - 'v*'
 
-# Define as tarefas que serão executadas
+permissions:
+  id-token: write  # Required for OIDC
+  contents: read
+
 jobs:
   publish:
-    # Executa em uma máquina virtual Ubuntu (ambiente limpo e consistente)
     runs-on: ubuntu-latest
-    
-    # Configurações de segurança importantes para o OpenID Connect
-    permissions:
-      contents: read      # Permite ler o código do repositório
-      id-token: write     # Permite usar OpenID Connect para autenticação segura
-    
-    # Sequência de passos que serão executados
     steps:
-      # Passo 1: Baixa o código-fonte do repositório para a máquina virtual
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Baixa todo o histórico Git (necessário para algumas operações)
-      
-      # Passo 2: Configura o ambiente Node.js com a versão específica
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'          # Atualizado para Node 20 (necessário para npm 11.5.1+)
-          registry-url: 'https://registry.npmjs.org'  # Configura para publicar no NPM oficial
-          cache: 'npm'                # Ativa cache para acelerar instalação de dependências
-      
-      # Passo 3: Atualiza npm para versão compatível com trusted publishing
-      - name: Update npm to latest
-        run: npm install -g npm@latest
-        # Trusted publishing requer npm 11.5.1 ou superior
-      
-      # Passo 4: Instala todas as dependências listadas no package.json
-      - name: Install dependencies
-        run: npm ci
-        # npm ci é mais rápido e seguro que npm install em ambientes de CI/CD
-      
-      # Passo 4: Executa os testes para garantir qualidade do código
-      - name: Run tests
-        run: npm test
-        # Este passo previne publicação de código com bugs
-        # Se os testes falharem, o workflow para aqui e não publica
-      
-      # Passo 5: Compila o código TypeScript para JavaScript
-      - name: Build project
-        run: npm run build
-        # Gera os arquivos finais na pasta dist/ que serão incluídos no pacote
-      
-      # Passo 6: Valida que a compilação foi bem-sucedida
-      - name: Verify build artifacts
-        run: |
-          ls -la dist/              # Lista arquivos compilados
-          test -f dist/cli.js       # Verifica se o arquivo principal existe
-          test -d templates/        # Verifica se a pasta de templates existe
-        # Esses checks garantem que todos os arquivos necessários foram gerados
-      
-      # Passo 7: Publica o pacote no NPM usando OpenID Connect (OIDC)
-      - name: Publish to NPM
-        run: npm publish --provenance --access public
-        # --provenance adiciona informações de origem para maior transparência
-        # --access public garante que o pacote será público (importante para scoped packages)
-        # A autenticação acontece automaticamente via OpenID Connect
-        # Não é necessário NODE_AUTH_TOKEN quando usando Trusted Publisher
+      - uses: actions/checkout@v4
 
-# Comentários adicionais sobre funcionalidades avançadas:
-#
-# 1. PROVENANCE: A flag --provenance cria um "certificado digital" que prova
-#    que o pacote foi realmente construído a partir do código-fonte no GitHub,
-#    aumentando a confiança dos usuários.
-#
-# 2. SECURITY: Todo o processo acontece em uma máquina virtual isolada que é
-#    destruída após a conclusão, eliminando riscos de contaminação.
-#
-# 3. AUTOMATION: Uma vez configurado, você nunca mais precisa publicar manualmente.
-#    Apenas crie uma tag Git (ex: git tag v1.0.1 && git push --tags) e o workflow
-#    automaticamente testa, compila, e publica a nova versão.
-#
-# 4. TRANSPARENCY: Toda execução fica registrada publicamente no GitHub,
-#    permitindo auditoria completa do processo de publicação.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      # Ensure npm 11.5.1 or later is installed
+      - name: Update npm
+        run: npm install -g npm@latest
+      - run: npm ci
+      - run: npm run build --if-present
+      - run: npm test
+      - run: npm publish
