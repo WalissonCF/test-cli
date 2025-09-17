@@ -1,6 +1,6 @@
 {
   "name": "@wally-ui/cli",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A modern Angular component library CLI - Copy & paste beautiful components",
   "main": "dist/index.js",
   "bin": {
