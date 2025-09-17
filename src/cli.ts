@@ -373,7 +373,7 @@ function addComponent(componentName: string) {
     } else {
       console.log(chalk.red('\n❌ Erro inesperado ao carregar template'));
     }
-    console.log(chalk.gray('Verifique se o template existe e está correto testando'));
+    console.log(chalk.gray('Verifique se o template existe e está correto testando teste 2'));
   }
 }
 
