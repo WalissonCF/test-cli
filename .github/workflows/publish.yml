@@ -38,7 +38,12 @@ jobs:
           registry-url: 'https://registry.npmjs.org'  # Configura para publicar no NPM oficial
           cache: 'npm'                # Ativa cache para acelerar instalação de dependências
       
-      # Passo 3: Instala todas as dependências listadas no package.json
+      # Passo 3: Atualiza npm para versão compatível com trusted publishing
+      - name: Update npm to latest
+        run: npm install -g npm@latest
+        # Trusted publishing requer npm 11.5.1 ou superior
+      
+      # Passo 4: Instala todas as dependências listadas no package.json
       - name: Install dependencies
         run: npm ci
         # npm ci é mais rápido e seguro que npm install em ambientes de CI/CD
